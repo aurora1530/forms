@@ -1,4 +1,5 @@
 import '@/app/globals.css';
+import Container from '@/components/Container';
 import Header from '@/components/Header';
 import { fontVariablesClassName } from '@/lib/fonts';
 
@@ -16,7 +17,7 @@ export default function RootLayout(props: {
     <html lang="ja">
       <body className={fontVariablesClassName}>
         <Header />
-        {props.children}
+        <Container>{props.children}</Container>
       </body>
     </html>
   )

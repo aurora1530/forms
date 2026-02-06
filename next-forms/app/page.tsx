@@ -1,5 +1,36 @@
-export default function TopPage() {
+import dateFormat from '@/lib/dateFormat';
+import prisma from '@/lib/prisma';
+
+export default async function TopPage() {
+  const forms = await prisma.form.findMany({
+    include: {
+      user: {
+        select: {
+          username: true,
+        },
+      },
+    },
+    orderBy: { createdAt: 'desc' },
+  });
+  const formCards = forms.map(async (form) => {
+    const formattedCreatedAt = dateFormat(form.createdAt);
+    const formattedUpdatedAt = dateFormat(form.updatedAt);
+    return (
+      <div key={form.formId} className="border border-gray-300 rounded p-3 m-3">
+        <h2>タイトル：{form.formTitle}</h2>
+        <p>説明：{form.description}</p>
+        <p>作成日時：{formattedCreatedAt}</p>
+        {formattedCreatedAt === formattedUpdatedAt ? null : (
+          <p>更新日時：{formattedUpdatedAt}</p>
+        )}
+        <p className="mb-3">作成者：{form.user.username}</p>
+      </div>
+    );
+  });
+
   return (
-    <div className="text-red-500 font-bold">Hello, world!</div>
+    <>
+      {await Promise.all(formCards)}
+    </>
   );
 }
